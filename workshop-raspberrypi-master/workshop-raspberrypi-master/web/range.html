@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang='en'>
+<head>
+	<meta charset='UTF-8'>
+	<meta name='viewport' content='width=device-width, initial-scale=1'>
+	<title>Proximity Demo</title>
+
+	<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css'>
+	<style>
+* { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
+body {
+  	font-family: 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', 'Roboto Light', 'Segoe UI Web Light', 'Segoe UI Light', 'Segoe UI Web Regular', 'Segoe UI', Helvetica, Arial, sans-serif; 
+  	margin: 1em;
+
+  	background-color: #C6BCB3;
+	background-image:
+	repeating-linear-gradient(120deg, rgba(255,255,255,.2), rgba(255,255,255,.2) 1px, transparent 1px, transparent 60px),
+	repeating-linear-gradient(60deg, rgba(255,255,255,.2), rgba(255,255,255,.2) 1px, transparent 1px, transparent 60px),
+	linear-gradient(60deg, rgba(0,0,0,.05) 25%, transparent 25%, transparent 75%, rgba(0,0,0,.05) 75%, rgba(0,0,0,.05)),
+	linear-gradient(120deg, rgba(0,0,0,.05) 25%, transparent 25%, transparent 75%, rgba(0,0,0,.05) 75%, rgba(0,0,0,.05));
+	background-size: 70px 120px;
+}
+header {
+	margin-bottom: 4em;
+}
+h1, h2, h3 {
+	margin: 0;
+	text-rendering: optimizeLegibility;
+}
+h1 {
+	font-size: 2.4em;
+	line-height: 1.4em;
+	text-transform: lowercase;
+	font-weight: normal;
+	text-shadow: 1px 2px 0 #fff;
+}
+h2 {
+	font-size: 1em;
+	text-transform: uppercase;
+	font-weight: normal;
+	text-shadow: 1px 1px 0 #fff;
+}
+h3 {
+	font-size: 2em;
+	text-transform: uppercase;
+}
+footer {
+	position: absolute;
+	bottom: 2em;
+}
+p {
+	font-size: 1.5rem;
+}
+.container {
+  margin: 4em;
+}
+.hidden {
+	display: none;
+}
+.slider {
+	width: 100%;
+	display: -webkit-flex; // for Pi
+	display: flex;
+	align-items: center;
+}
+.slider i {
+	padding: 0 20px;
+}
+.dottedLine {
+  	border-bottom: 6px dashed #666;
+  	-webkit-flex-grow: 1;
+  	flex-grow: 1;
+}
+.fa {
+	font-size: 8em;
+}
+.fa-coffee {
+	color: rgb(120, 37, 6);
+}
+.dist-label {
+	
+}
+.message {
+  	position: relative;
+  	width: 800px;
+  	margin: 20px auto;
+}
+.message strong, .message h3 {
+	color: #ce1126;
+	text-transform: uppercase;
+}
+.close {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	font-size: 2em;
+}
+	</style>
+
+</head>
+<body>
+	<header>
+		<h1>Getting data from a Ultrasonic Rangefinder sensor</h1>
+		<h2>Subscribing your data from a sensor with Raspberry Pi with JavaScript</h2>
+	</header>
+	<div class='container'>
+		<div class='slider'>
+			<i class='fa fa-coffee'></i>
+			<div class='dottedLine'></div>
+			<i id='person' class='fa fa-male'></i>
+		</div>
+
+		<div class="dist-label">
+			<p>Actual Distance: <span id='distance'>N/A</span></p>
+		</div>
+	</div>
+
+	<div class='container'>
+		<div class='hidden' id='ad'>
+			<div class='message'>
+				<button type='button' class='close' aria-label='Close'><span aria-hidden='true'>&times;</span></button>
+				<img src="images/ad.png">
+			</div>
+		</div>
+	</div>
+
+	<!-- including the latest PubNub JavaScript SDK -->
+	<script src="http://cdn.pubnub.com/pubnub-3.7.1.min.js"></script>
+	
+	<script>
+(function(){
+	var proximal = 40;
+	var ad = document.getElementById('ad');
+
+	var person = document.getElementById('person');
+	var slider = document.querySelector('.slider');
+
+	pubnub = PUBNUB.init({
+		publish_key   :'pub-c-156a6d5f-22bd-4a13-848d-b5b4d4b36695',
+	  subscribe_key :'sub-c-f762fb78-2724-11e4-a4df-02ee2ddab7fe'
+	});
+
+	pubnub.subscribe({
+		channel : 'Rangefinder',
+	  	message : function(m){
+			console.log(m);
+
+			document.getElementById('distance').textContent = m.distance + ' cm';
+
+			if(m.distance <= 100) {
+			  	person.style.left = m.distance + '%';
+			  	slider.style.width = m.distance + '%';
+			} else {
+				person.style.left = '100%';
+			  	slider.style.width = '100%';
+			}
+			
+			
+			if (m.distance <= proximal) {
+			  	ad.classList.remove('hidden');
+			} else if (!ad.classList.contains('hidden')){
+			  	ad.classList.add('hidden');
+			}
+	  	}
+	});
+
+	document.querySelector('.close').addEventListener('click', function(){
+		ad.classList.add('hidden');
+	});
+})();
+	</script>
+</body>
+</html>
+tListener('click', function(){
+		ad.classList.add('hidden');
+	});
+})();
+	</script>
+</body>
+</html>
+
