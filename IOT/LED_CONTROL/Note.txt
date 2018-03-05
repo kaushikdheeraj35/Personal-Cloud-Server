@@ -1,0 +1,2 @@
+on raspbberry pi execute the python script blink1.py present in PROGRAMS
+cd PROGRAMS
